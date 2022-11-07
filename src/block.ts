@@ -14,7 +14,7 @@ class Block {
 }
 for (let number : number = 0; number < 10; number = number + 1 ) {
     const firstBlock = new Block(number, "0xabcfrs46483477rfhdcgdjgcj", "0xcdfsugdiiwt53442gghdi", "sudeep sent 1 million usd");
-    const secondBlock = new Block(number + 1, `${firstBlock.currentBlockHash}`, "0xdshjdjgjdk", "Tanmaya with saketh")
+    const secondBlock = new Block(number + 1, `${firstBlock.currentBlockHash}`, "0xdshjdjgjdk", "sudeep sent 2 million usd")
     console.log(firstBlock);
     console.log(secondBlock);
 }
