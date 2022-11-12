@@ -3,7 +3,7 @@ import *  as crypto from 'crypto';
 const hexToBinary = (hexData : string) => hexData.split('').map(i => parseInt(i, 16).toString(2).padStart(4, '0')).join('');
 
 const hashing = (...blockDetails : any)  => {
-    return hexToBinary(crypto.createHash('sha256').update(blockDetails.sort().join("")).digest('hex'));
+    return hexToBinary(crypto.createHash('sha256').update(blockDetails.sort().join('')).digest('hex'));
 }
 
 const miningRate : number = 10000; // Here the mining Rate is defined in milliseconds. so this is 10 seconds
@@ -88,7 +88,7 @@ class BlockChain {
             if (currentBlockHash !== hashingFuncHash) {
                 console.log("This Chain is not valid")
             };
-            
+
             if (Math.abs(difficulty - lastBlockDifficulty) > 1) {
                 console.log("Miner has manipulated the difficulty")
             }
