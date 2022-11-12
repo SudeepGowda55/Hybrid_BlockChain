@@ -73,17 +73,26 @@ class BlockChain {
 
     static validationCheck (newChain : BlockChain)  {
         if (JSON.stringify(newChain.chain[0]) !== JSON.stringify(Block.genesis())) {
-            console.error("Chain is not valid")
+            console.error("This Chain is not valid")
         }
 
         for (let i : number = 1; i < newChain.chain.length; i ++ ){
             const {currentBlockHash, prevBlockHash, data, difficulty, nonce, timeStamp} = newChain.chain[i];
             const lastBlockHash = newChain.chain[i - 1].currentBlockHash;
-            if (prevBlockHash !== lastBlockHash) return "Chain is not valid";
-            const hashingFuncHash = hashing(timeStamp, data, difficulty, nonce, prevBlockHash);
-            if (currentBlockHash !== hashingFuncHash) return "Chain is not valid";
-        }
+            const lastBlockDifficulty = newChain.chain[i - 1].difficulty;
+            if (prevBlockHash !== lastBlockHash) {
+                console.log("This Chain is not valid")
+            };
+            const hashingFuncHash = parseInt(hashing(timeStamp, data, difficulty, nonce, prevBlockHash), 2).toString(16).toUpperCase();
 
+            if (currentBlockHash !== hashingFuncHash) {
+                console.log("This Chain is not valid")
+            };
+            
+            if (Math.abs(difficulty - lastBlockDifficulty) > 1) {
+                console.log("Miner has manipulated the difficulty")
+            }
+        }
         return "This Blockchain is valid"
     }
 
@@ -92,7 +101,6 @@ class BlockChain {
         console.error("This is not the longest Chain");
         return
       }
-
       else if (!BlockChain.validationCheck(minerSentChain)){
         console.error("This Chain is not valid")
         return
@@ -130,4 +138,3 @@ const verification = BlockChain.validationCheck(darkGuildBlockchain);
 if (verification) {
     console.log(darkGuildBlockchain);
 }
-
