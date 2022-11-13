@@ -1,4 +1,7 @@
 import *  as crypto from 'crypto';
+import express from "express";
+
+const app = express();
 
 const hexToBinary = (hexData : string) => hexData.split('').map(i => parseInt(i, 16).toString(2).padStart(4, '0')).join('');
 
@@ -37,17 +40,17 @@ class Block {
         do {
             nonce ++; 
             nonceTimeStamp = Date.now();
-            difficulty = Block.adjustingDifficulty({timestamp : nonceTimeStamp, originalBlock : miningData.prevBlock});
+            difficulty = Block.adjustingDifficulty({timestamp : nonceTimeStamp, previousBlock : miningData.prevBlock});
             currentHash = hashing(nonce, nonceTimeStamp, miningData.data, prevBlockHash, difficulty );
         } while (currentHash.substring(0, difficulty) !== '0'.repeat(difficulty)) ;
         console.log(difficulty);
         return new this({timestamp : nonceTimeStamp, prevBlockHash : prevBlockHash, currentBlockHash: parseInt(currentHash, 2).toString(16).toUpperCase(), data : miningData.data, nonce : nonce, difficulty : difficulty });
     }   
 
-    static adjustingDifficulty(difficultyObject : {timestamp : number, originalBlock : Block}){
-        const {difficulty} = difficultyObject.originalBlock;
+    static adjustingDifficulty(difficultyObject : {timestamp : number, previousBlock : Block}){
+        const {difficulty} = difficultyObject.previousBlock;
         if (difficulty < 1) return 1;
-        const differenceInTimestamp : number = difficultyObject.timestamp - difficultyObject.originalBlock.timeStamp;
+        const differenceInTimestamp : number = difficultyObject.timestamp - difficultyObject.previousBlock.timeStamp;
         if (differenceInTimestamp > miningRate) {
             return difficulty - 1;
         } 
@@ -118,9 +121,8 @@ let prevBlockTimeStamp : number, nextBlockTimeStamp : number, timeDifference : n
 darkGuildBlockchain.addBlock({data : "sudeep sent monisha 8 ETH"});
 darkGuildBlockchain.addBlock({data : "monisha sent sudeep 10 ETH"});
 darkGuildBlockchain.addBlock({data : "ms"});
-darkGuildBlockchain.addBlock({data : "sudeep sent monisha 8 ETH"});
+darkGuildBlockchain.addBlock({data : "Hackersploit sent david 12 ETH"});
 darkGuildBlockchain.addBlock({data : "monisha sent sudeep 10 ETH"});
-darkGuildBlockchain.addBlock({data : "ms"});
 
 for (let j = 2 ; j < darkGuildBlockchain.chain.length; j ++) {
     prevBlockTimeStamp = darkGuildBlockchain.chain[j- 1].timeStamp;
@@ -138,3 +140,20 @@ const verification = BlockChain.validationCheck(darkGuildBlockchain);
 if (verification) {
     console.log(darkGuildBlockchain);
 }
+
+app.use(express.urlencoded({extended: true}));
+app.use(express.json());
+
+app.get("/api/blocks", (req, res) => {
+    res.json(darkGuildBlockchain.chain);
+})
+
+app.post("/api/addblock", (req, res) => {
+    const {data} = req.body;
+    darkGuildBlockchain.addBlock({data : data});
+    res.json(darkGuildBlockchain.chain)
+})
+
+app.listen(3030, () =>  {
+    console.log(`Server runnng at port no 3030`)
+})
