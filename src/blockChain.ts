@@ -16,11 +16,11 @@ class Block {
     timeStamp : number;
     prevBlockHash : string;
     currentBlockHash : string;
-    data: string;
+    data: string[];
     nonce : number;
     difficulty : number;
 
-    constructor ( object : {timestamp : number, prevBlockHash : string, currentBlockHash : string, data : string, nonce : number, difficulty : number}){
+    constructor ( object : {timestamp : number, prevBlockHash : string, currentBlockHash : string, data : string[], nonce : number, difficulty : number}){
        this.timeStamp = object.timestamp;
        this.prevBlockHash = object.prevBlockHash;
        this.currentBlockHash = object.currentBlockHash;
@@ -30,10 +30,10 @@ class Block {
     }
 
     static genesis() : Block {
-        return new Block({timestamp: 1668181324864, prevBlockHash : '0x0000000000000000000000000000000000000000000000000000000000000000 ', currentBlockHash: '0x07166e335add1e3831a7a8fce006660067eca119108cc62122722e2feaaadc', data : "Genesis Block Created", nonce : 0, difficulty : 15})
+        return new Block({timestamp: 1668181324864, prevBlockHash : '0x0000000000000000000000000000000000000000000000000000000000000000 ', currentBlockHash: '0x07166e335add1e3831a7a8fce006660067eca119108cc62122722e2feaaadc', data : ["Genesis Block Created"], nonce : 0, difficulty : 15})
     }
 
-    static creatingBlock(miningData : {prevBlock : Block, data : string}) {
+    static creatingBlock(miningData : {prevBlock : Block, data : string[]}) {
         let nonceTimeStamp: number, currentHash : string, nonce : number = 0;
         let { difficulty } = miningData.prevBlock ;
         const prevBlockHash : string = miningData.prevBlock.currentBlockHash;
@@ -69,7 +69,7 @@ class BlockChain {
         this.chain = [genesisBlock]
     }
 
-    addBlock(blockChainObject : {data : string}) {
+    addBlock(blockChainObject : {data : string[]}) {
         const newBlock : Block = Block.creatingBlock({prevBlock : this.chain[(this.chain.length)-1], data : blockChainObject.data});
         this.chain.push(newBlock);
     }
@@ -118,11 +118,12 @@ const timeStampDifferences : number[] = [];
 
 let prevBlockTimeStamp : number, nextBlockTimeStamp : number, timeDifference : number, avgTime : number ;
 
-darkGuildBlockchain.addBlock({data : "sudeep sent monisha 8 ETH"});
-darkGuildBlockchain.addBlock({data : "monisha sent sudeep 10 ETH"});
-darkGuildBlockchain.addBlock({data : "ms"});
-darkGuildBlockchain.addBlock({data : "Hackersploit sent david 12 ETH"});
-darkGuildBlockchain.addBlock({data : "monisha sent sudeep 10 ETH"});
+darkGuildBlockchain.addBlock({data : ["sudeep sent monisha 8 ETH", "bob sent 1 eth to 0x893bjkdbmcbfb"]});
+darkGuildBlockchain.addBlock({data : ["monisha sent sudeep 10 ETH"]});
+darkGuildBlockchain.addBlock({data : ["ms"]});
+darkGuildBlockchain.addBlock({data : ["Hackersploit sent david 12 ETH"]});
+darkGuildBlockchain.addBlock({data : ["monisha sent sudeep 10 ETH", "david 12 eth"]});
+darkGuildBlockchain.addBlock({data : ["monisha sent sudeep 10 ETH"]});
 
 for (let j = 2 ; j < darkGuildBlockchain.chain.length; j ++) {
     prevBlockTimeStamp = darkGuildBlockchain.chain[j- 1].timeStamp;
