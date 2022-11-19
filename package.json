@@ -13,14 +13,16 @@
   },
   "type": "commonjs",
   "scripts": {
-    "start": "NODE_ENV=development tsc && nodemon ./dest/blockChain.js",
+    "start": "NODE_ENV=development nodemon ./src/blockChain.ts",
     "dev": "NODE_ENV=development ts-node-dev --inspect --respawn ./src/blockChain.ts",
-    "prod" : "NODE_ENV=production tsc && node ./dest/blockChain.js",
+    "prod": "NODE_ENV=production tsc && node ./dest/blockChain.js",
     "pm2": "NODE_ENV=production tsc && pm2 start pm2.config.js",
-    "pm2reload" : "NODE_ENV=production tsc && pm2 reload pm2.config.js"
+    "pm2reload": "NODE_ENV=production tsc && pm2 reload pm2.config.js",
+    "dev:producer": "nodemon ./src/kafkaProducer.ts"
   },
   "dependencies": {
     "express": "4",
+    "kafkajs": "^2.2.2",
     "ts-node": "^10.9.1"
   }
 }

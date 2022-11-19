@@ -1,7 +1,14 @@
 import *  as crypto from 'crypto';
 import express from "express";
+import { Kafka } from 'kafkajs';
+import { json } from 'stream/consumers';
 
 const app = express();
+
+const kafka = new Kafka({
+    clientId : "validator1",
+    brokers : ['34.67.215.248:9092']
+})
 
 const hexToBinary = (hexData : string) => hexData.split('').map(i => parseInt(i, 16).toString(2).padStart(4, '0')).join('');
 
@@ -136,10 +143,25 @@ avgTime = timeStampDifferences.reduce((total : number, num : number) => total + 
 
 console.log(avgTime / 1000, "seconds");
 
+const updateBlockchain = async () => {
+    const consumer = kafka.consumer({
+        groupId : "miners1"
+    })
+
+    await consumer.connect();
+    await consumer.subscribe({topic : "blockchain", fromBeginning : true});
+    await consumer.run({
+        eachMessage : async ({message}) => {
+            console.log({ value : message.value?.toString() })
+            darkGuildBlockchain.addBlock({ data : [JSON.stringify(message.value?.toString())]});
+        }
+    })
+}
+
 const verification = BlockChain.validationCheck(darkGuildBlockchain);
 
 if (verification) {
-    console.log(darkGuildBlockchain);
+    updateBlockchain();
 }
 
 app.use(express.urlencoded({extended: true}));
@@ -147,12 +169,6 @@ app.use(express.json());
 
 app.get("/api/blocks", (req, res) => {
     res.json(darkGuildBlockchain.chain);
-})
-
-app.post("/api/addblock", (req, res) => {
-    const {data} = req.body;
-    darkGuildBlockchain.addBlock({data : data});
-    res.json(darkGuildBlockchain.chain)
 })
 
 app.listen(3030, () =>  {
