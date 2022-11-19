@@ -12,7 +12,7 @@ const publishData = async () =>  {
     await producer.send({
         topic : 'blockchain',
         messages : [
-            {value : "0x123dDFF223gdj6ge663ggh sent 3 ETH to 0x9cdf35jnfbha7gf8ddDDF"}
+            {value : "0x123dDFF223gdj6ge663ggh sent 15 ETH to 0x9cdf35jnfbha7gf8ddDDF"}
         ]
     });
 }

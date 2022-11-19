@@ -1,7 +1,6 @@
 import *  as crypto from 'crypto';
 import express from "express";
 import { Kafka } from 'kafkajs';
-import { json } from 'stream/consumers';
 
 const app = express();
 
@@ -23,7 +22,7 @@ class Block {
     timeStamp : number;
     prevBlockHash : string;
     currentBlockHash : string;
-    data: string[];
+    transactionData: string[];
     nonce : number;
     difficulty : number;
 
@@ -31,7 +30,7 @@ class Block {
        this.timeStamp = object.timestamp;
        this.prevBlockHash = object.prevBlockHash;
        this.currentBlockHash = object.currentBlockHash;
-       this.data = object.data;
+       this.transactionData = object.data;
        this.nonce = object.nonce;
        this.difficulty = object.difficulty;
     }
@@ -87,13 +86,13 @@ class BlockChain {
         }
 
         for (let i : number = 1; i < newChain.chain.length; i ++ ){
-            const {currentBlockHash, prevBlockHash, data, difficulty, nonce, timeStamp} = newChain.chain[i];
+            const {currentBlockHash, prevBlockHash, transactionData, difficulty, nonce, timeStamp} = newChain.chain[i];
             const lastBlockHash = newChain.chain[i - 1].currentBlockHash;
             const lastBlockDifficulty = newChain.chain[i - 1].difficulty;
             if (prevBlockHash !== lastBlockHash) {
                 console.log("This Chain is not valid")
             };
-            const hashingFuncHash = parseInt(hashing(timeStamp, data, difficulty, nonce, prevBlockHash), 2).toString(16).toUpperCase();
+            const hashingFuncHash = parseInt(hashing(timeStamp, transactionData, difficulty, nonce, prevBlockHash), 2).toString(16).toUpperCase();
 
             if (currentBlockHash !== hashingFuncHash) {
                 console.log("This Chain is not valid")
@@ -161,6 +160,7 @@ const updateBlockchain = async () => {
 const verification = BlockChain.validationCheck(darkGuildBlockchain);
 
 if (verification) {
+    console.log(darkGuildBlockchain.chain)
     updateBlockchain();
 }
 
@@ -171,6 +171,6 @@ app.get("/api/blocks", (req, res) => {
     res.json(darkGuildBlockchain.chain);
 })
 
-app.listen(3030, () =>  {
+app.listen(3033, () =>  {
     console.log(`Server runnng at port no 3030`)
 })
