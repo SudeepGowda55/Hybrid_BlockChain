@@ -216,6 +216,6 @@ app.get("/api/blocks", (req, res) => {
     res.json(darkGuildBlockchain.chain);
 })
 
-app.listen(3033, () => {
-    console.log(`Server runnng at port no 3030`)
+app.listen(3000, () => {
+    console.log(`Server runnng at port no 3000`)
 })
